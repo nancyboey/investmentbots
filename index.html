@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="300">
+    <title>My Investment Bots - Live Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+        
+        .live-indicator {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px 30px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .info-box strong {
+            color: #1976d2;
+            font-size: 1.1em;
+        }
+        
+        .info-box p {
+            margin-top: 8px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .update-banner {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .update-banner h2 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .bots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .bot-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-top: 6px solid;
+            transition: transform 0.3s ease;
+        }
+        
+        .bot-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .bot-card.monitor { border-top-color: #e74c3c; }
+        .bot-card.education { border-top-color: #2ecc71; }
+        .bot-card.research { border-top-color: #3498db; }
+        
+        .bot-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .bot-icon {
+            font-size: 3em;
+        }
+        
+        .bot-title h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .bot-status {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .bot-description {
+            color: #6c757d;
+            line-height: 1.7;
+            margin: 20px 0;
+            font-size: 1.05em;
+        }
+        
+        .schedule-box {
+            background: #f8f9fa;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .schedule-box p {
+            margin: 8px 0;
+            color: #495057;
+        }
+        
+        .reports-section {
+            margin-top: 25px;
+        }
+        
+        .reports-section h3 {
+            font-size: 1.3em;
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .report-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .report-item h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .report-item p {
+            color: #6c757d;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+        
+        .read-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .read-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .coming-soon {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #856404;
+        }
+        
+        .report-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .report-content.show {
+            display: block;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 3px solid #e9ecef;
+        }
+        
+        .timestamp {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            background: #f8f9fa;
+        }
+        
+        .auto-refresh-notice {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .auto-refresh-notice strong {
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 My Investment Bots</h1>
+            <p>Your automated investing assistants working 24/7</p>
+            <div class="live-indicator">🔴 LIVE - Auto-Updates Every 5 Minutes</div>
+        </div>
+        
+        <div class="info-box">
+            <strong>🌐 Cloud Dashboard - Always Up-to-Date!</strong>
+            <p>This page automatically refreshes every 5 minutes. Bookmark it and check back anytime to see your latest reports!</p>
+        </div>
+        
+        <div class="content">
+            <div class="auto-refresh-notice">
+                <strong>✨ This page updates automatically!</strong> New reports appear here as soon as your bots create them. No need to refresh manually!
+            </div>
+            
+            <div class="update-banner">
+                <h2>✨ All Bots Updated!</h2>
+                <p>Starting tomorrow (October 2), all reports will be SUPER SIMPLE with no jargon!</p>
+            </div>
+            
+            <div class="bots-grid">
+                <!-- Portfolio Monitor Bot -->
+                <div class="bot-card monitor">
+                    <div class="bot-header">
+                        <div class="bot-icon">📊</div>
+                        <div class="bot-title">
+                            <h2>Portfolio Monitor</h2>
+                            <span class="bot-status">ACTIVE</span>
+                        </div>
+                    </div>
+                    
+                    <p class="bot-description">
+                        Watches the market every day and tells you what's happening in simple English.
+                    </p>
+                    
+                    <div class="schedule-box">
+                        <p><strong>⏰ Runs:</strong> Weekdays at 6:00 PM (Brussels time)</p>
+                        <p><strong>📅 Next Report:</strong> <span id="next-monitor"></span></p>
+                    </div>
+                    
+                    <div class="reports-section">
+                        <h3>📈 Latest Reports:</h3>
+                        <div id="monitor-reports">
+                            <div class="coming-soon">
+                                <strong>⏳ Tomorrow's Simple Report</strong><br>
+                                Will be available at 6:00 PM - Check back then!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Education Bot -->
+                <div class="bot-card education">
+                    <div class="bot-header">
+                        <div class="bot-icon">🎓</div>
+                        <div class="bot-title">
+                            <h2>Education Bot</h2>
+                            <span class="bot-status">ACTIVE</span>
+                        </div>
+                    </div>
+                    
+                    <p class="bot-description">
+                        Teaches you one simple investing concept each day in plain language.
+                    </p>
+                    
+                    <div class="schedule-box">
+                        <p><strong>⏰ Runs:</strong> Every day at 8:00 AM (Brussels time)</p>
+                        <p><strong>📅 Next Lesson:</strong> <span id="next-education"></span></p>
+                    </div>
+                    
+                    <div class="reports-section">
+                        <h3>📚 Latest Lessons:</h3>
+                        <div id="education-reports">
+                            <div class="coming-soon">
+                                <strong>⏳ Tomorrow's Simple Lesson</strong><br>
+                                Will be available at 8:00 AM - Check back then!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Robo-Advisor Research Bot -->
+                <div class="bot-card research">
+                    <div class="bot-header">
+                        <div class="bot-icon">🔍</div>
+                        <div class="bot-title">
+                            <h2>Robo-Advisor Research</h2>
+                            <span class="bot-status">ACTIVE</span>
+                        </div>
+                    </div>
+                    
+                    <p class="bot-description">
+                        Researches Belgian investing platforms and compares them for you.
+                    </p>
+                    
+                    <div class="schedule-box">
+                        <p><strong>⏰ Runs:</strong> Every Monday at 10:00 AM</p>
+                        <p><strong>📅 Next Report:</strong> <span id="next-research"></span></p>
+                    </div>
+                    
+                    <div class="reports-section">
+                        <h3>🔎 Latest Research:</h3>
+                        <div id="research-reports">
+                            <div class="coming-soon">
+                                <strong>⏳ Next Report</strong><br>
+                                Monday, October 6 at 10:00 AM
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timestamp">
+            <p><strong>Last Updated:</strong> <span id="current-time"></span></p>
+            <p style="margin-top: 10px; color: #28a745; font-weight: bold;">✅ Page auto-refreshes every 5 minutes</p>
+        </div>
+    </div>
+    
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Europe/Brussels'
+            };
+            document.getElementById('current-time').textContent = 
+                now.toLocaleString('en-US', options) + ' (Brussels time)';
+        }
+        
+        function calculateNextRun(hour, minute, daysOfWeek = null) {
+            const now = new Date();
+            const brussels = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Brussels' }));
+            const next = new Date(brussels);
+            
+            next.setHours(hour, minute, 0, 0);
+            
+            if (next <= brussels) {
+                next.setDate(next.getDate() + 1);
+            }
+            
+            if (daysOfWeek) {
+                while (!daysOfWeek.includes(next.getDay())) {
+                    next.setDate(next.getDate() + 1);
+                }
+            }
+            
+            const options = { 
+                weekday: 'long',
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return next.toLocaleString('en-US', options);
+        }
+        
+        function updateNextRuns() {
+            // Portfolio Monitor: Weekdays at 6 PM
+            document.getElementById('next-monitor').textContent = 
+                calculateNextRun(18, 0, [1, 2, 3, 4, 5]);
+            
+            // Education Bot: Every day at 8 AM
+            document.getElementById('next-education').textContent = 
+                calculateNextRun(8, 0);
+            
+            // Research Bot: Mondays at 10 AM
+            document.getElementById('next-research').textContent = 
+                calculateNextRun(10, 0, [1]);
+        }
+        
+        // Update time immediately
+        updateTime();
+        updateNextRuns();
+        
+        // Update time every second
+        setInterval(updateTime, 1000);
+        
+        console.log('✅ Cloud Dashboard loaded!');
+        console.log('🔄 Auto-refresh enabled - page will reload every 5 minutes');
+    </script>
+</body>
+</html>
